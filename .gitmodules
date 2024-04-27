@@ -1,0 +1,3 @@
+[submodule "Lambix/thirdParty/imgui"]
+	path = Lambix/thirdParty/imgui
+	url = https://github.com/ocornut/imgui.git
