@@ -1,20 +1,88 @@
+#include "lbpch.h"
+
 #include "Application.h"
+#include "Log.h"
+#include "Input.h"
 
-namespace Lambix
-{
+#include "glad/glad.h"
+#include "GLFW/glfw3.h"
 
-    Application::Application()
-    {
-    }
+namespace Lambix {
 
-    Application::~Application()
-    {
-    }
+	Application* Application::m_Instance = nullptr;
 
-    void Application::Run()
-    {
-        while (1)
-        {
-        }
-    }
+	Application::Application()
+	{
+		LB_CORE_ASSERT(!m_Instance, "Application already exists!");
+		m_Instance = this;
+
+		// 窗口类创建 设置回调
+		m_Window = std::unique_ptr<Window>(Window::Create());
+		m_Window->SetEventCallback(LB_BIND_EVENT_FN(Application::OnEvent));
+
+		// ImGui 图层创建 附加
+		m_ImGuiLayer = new ImGuiLayer();
+		PushOverlay(m_ImGuiLayer);
+	}
+
+	Application::~Application()
+	{
+
+	}
+
+	void Application::Run()
+	{
+		while (m_Running) 
+		{
+			glClearColor(0.5f, 0.3f, 0.3f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+	
+			// 遍历各层级 执行更新
+			for (Layer* layer : m_LayerStack) {
+				layer->OnUpdate();
+			}
+
+			m_ImGuiLayer->Begin();
+			for (Layer* layer : m_LayerStack) {
+				layer->OnImGuiRender();
+			}
+			m_ImGuiLayer->End();
+			
+			// 窗口类更新
+			m_Window->OnUpdate();
+		}
+	}
+
+	void Application::OnEvent(Event& e)
+	{
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<WindowCloseEvent>(LB_BIND_EVENT_FN(Application::OnWindowClose));
+
+		//LB_CORE_TRACE("{0}", e);
+
+		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) 
+		{
+			(*--it)->OnEvent(e);
+			if (e.GetHandled())
+				break;
+		}
+	}
+
+	void Application::PushLayer(Layer* layer)
+	{
+		m_LayerStack.PushLayer(layer);
+		layer->OnAttach();
+	}
+
+	void Application::PushOverlay(Layer* overlay)
+	{
+		m_LayerStack.PushOverlay(overlay);
+		overlay->OnAttach();
+	}
+
+	bool Application::OnWindowClose(WindowCloseEvent& e)
+	{
+		m_Running = false;
+		return true;
+	}
 }
