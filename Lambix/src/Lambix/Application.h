@@ -7,6 +7,8 @@
 #include "LayerStack.h"
 #include "ImGui/ImGuiLayer.h"
 
+#include "Lambix/Renderer/Shader.h"
+
 /*
     应用类 单例
 */
@@ -35,6 +37,11 @@ namespace Lambix
         ImGuiLayer *m_ImGuiLayer;         // ImGuiLayer
         bool m_Running{true};             // 程序循环执行
         LayerStack m_LayerStack;          // 层 栈
+
+        unsigned int vao, vbo, ebo;
+
+        std::unique_ptr<Shader> m_Shader;
+
     private:
         static Application *m_Instance; // 应用类单例
     };
