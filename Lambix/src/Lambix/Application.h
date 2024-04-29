@@ -7,6 +7,10 @@
 #include "LayerStack.h"
 #include "ImGui/ImGuiLayer.h"
 
+#include "Lambix/Renderer/Shader.h"
+#include "Lambix/Renderer/Buffer.h"
+#include "Lambix/Renderer/VertexArray.h"
+
 /*
     应用类 单例
 */
@@ -35,6 +39,10 @@ namespace Lambix
         ImGuiLayer *m_ImGuiLayer;         // ImGuiLayer
         bool m_Running{true};             // 程序循环执行
         LayerStack m_LayerStack;          // 层 栈
+
+        std::shared_ptr<Shader> m_Shader;
+        std::shared_ptr<VertexArray> m_VertexArray;
+
     private:
         static Application *m_Instance; // 应用类单例
     };
