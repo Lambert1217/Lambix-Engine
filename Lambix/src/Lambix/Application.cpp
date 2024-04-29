@@ -26,43 +26,48 @@ namespace Lambix
 		PushOverlay(m_ImGuiLayer);
 
 		//---------------------------
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
+		m_VertexArray.reset(VertexArray::Create());
 
-		float vertices[3 * 3] = {
-			0.0f, 0.5f, 0.0f,
-			-0.5f, -0.5f, 0.0f,
-			0.5f, -0.5f, 0.0f};
-
+		float vertices[] = {
+			-0.5f, -0.5f, 0.0f, 1.0f, 0.8f, 0.8f, 1.0f,
+			-0.5f, 0.5f, 0.0f, 1.0f, 0.8f, 0.8f, 1.0f,
+			0.5f, -0.5f, 0.0f, 1.0f, 0.8f, 0.8f, 1.0f,
+			0.5f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f};
+		std::shared_ptr<VertexBuffer> m_VertexBuffer;
 		m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
+		BufferLayout layout = {
+			{"aPos", ShaderDataType::Float3},
+			{"aColor", ShaderDataType::Float4}};
+		m_VertexBuffer->SetLayout(layout);
+		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-
-		uint32_t indices[3] = {0, 1, 2};
+		uint32_t indices[] = {0, 1, 2, 1, 2, 3};
+		std::shared_ptr<IndexBuffer> m_IndexBuffer;
 		m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
 
 		// shader
 		std::string vertexSrc = R"(
 			#version 330 core
 			
 			layout(location = 0) in vec3 aPos;
-			out vec3 color;
+			layout(location = 1) in vec4 aColor;
+			out vec4 color;
 			void main()
 			{
 				gl_Position = vec4(aPos,1.0f);
-				color = aPos;
+				color = aColor;
 			} 
 		)";
 		std::string fragmentSrc = R"(
 			#version 330 core
 			
 			layout(location = 0) out vec4 FragColor;
-			in vec3 color;
+			in vec4 color;
 			void main()
 			{
 				//FragColor = vec4(1.0f,0.8f,0.8f,1.0f);
-				FragColor = vec4(color,1.0f);
+				FragColor = color,1.0f;
 			} 
 		)";
 
@@ -81,8 +86,8 @@ namespace Lambix
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			m_Shader->Bind();
-			glBindVertexArray(vao);
-			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+			m_VertexArray->Bind();
+			glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 			m_Shader->Unbind();
 
 			// 遍历各层级 执行更新

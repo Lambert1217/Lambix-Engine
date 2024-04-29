@@ -9,6 +9,7 @@
 
 #include "Lambix/Renderer/Shader.h"
 #include "Lambix/Renderer/Buffer.h"
+#include "Lambix/Renderer/VertexArray.h"
 
 /*
     应用类 单例
@@ -39,11 +40,8 @@ namespace Lambix
         bool m_Running{true};             // 程序循环执行
         LayerStack m_LayerStack;          // 层 栈
 
-        unsigned int vao;
-
-        std::unique_ptr<Shader> m_Shader;
-        std::unique_ptr<VertexBuffer> m_VertexBuffer;
-        std::unique_ptr<IndexBuffer> m_IndexBuffer;
+        std::shared_ptr<Shader> m_Shader;
+        std::shared_ptr<VertexArray> m_VertexArray;
 
     private:
         static Application *m_Instance; // 应用类单例
