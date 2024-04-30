@@ -7,6 +7,8 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
+#include "Lambix/Renderer/Renderer.h"
+
 namespace Lambix
 {
 
@@ -82,13 +84,16 @@ namespace Lambix
 	{
 		while (m_Running)
 		{
-			glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
+			RenderCommand::SetClearColor({0.2f, 0.2f, 0.2f, 1.0f});
+			RenderCommand::Clear();
+
+			Renderer::BeginScene();
 
 			m_Shader->Bind();
-			m_VertexArray->Bind();
-			glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+			Renderer::Submit(m_VertexArray);
 			m_Shader->Unbind();
+
+			Renderer::EndScene();
 
 			// 遍历各层级 执行更新
 			for (Layer *layer : m_LayerStack)
@@ -96,6 +101,7 @@ namespace Lambix
 				layer->OnUpdate();
 			}
 
+			// imgui 绘制
 			m_ImGuiLayer->Begin();
 			for (Layer *layer : m_LayerStack)
 			{
