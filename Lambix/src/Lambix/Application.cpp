@@ -14,7 +14,7 @@ namespace Lambix
 
 	Application *Application::m_Instance = nullptr;
 
-	Application::Application()
+	Application::Application() : m_Camera(-1.0f, 1.0f, 1.0f, -1.0f)
 	{
 		LB_CORE_ASSERT(!m_Instance, "Application already exists!");
 		m_Instance = this;
@@ -54,10 +54,12 @@ namespace Lambix
 			
 			layout(location = 0) in vec3 aPos;
 			layout(location = 1) in vec4 aColor;
+
+			uniform mat4 aViewProjection;
 			out vec4 color;
 			void main()
 			{
-				gl_Position = vec4(aPos,1.0f);
+				gl_Position = aViewProjection * vec4(aPos,1.0f);
 				color = aColor;
 			} 
 		)";
@@ -87,11 +89,12 @@ namespace Lambix
 			RenderCommand::SetClearColor({0.2f, 0.2f, 0.2f, 1.0f});
 			RenderCommand::Clear();
 
-			Renderer::BeginScene();
+			m_Camera.SetPosition({0.3f, 0.3f, 0.0f});
+			m_Camera.SetRotation(45.0f);
 
-			m_Shader->Bind();
-			Renderer::Submit(m_VertexArray);
-			m_Shader->Unbind();
+			Renderer::BeginScene(m_Camera);
+
+			Renderer::Submit(m_Shader, m_VertexArray);
 
 			Renderer::EndScene();
 

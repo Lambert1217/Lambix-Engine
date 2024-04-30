@@ -10,6 +10,7 @@
 #include "Lambix/Renderer/Shader.h"
 #include "Lambix/Renderer/Buffer.h"
 #include "Lambix/Renderer/VertexArray.h"
+#include "Lambix/Renderer/OrthoCamera.h"
 
 /*
     应用类 单例
@@ -42,6 +43,8 @@ namespace Lambix
 
         std::shared_ptr<Shader> m_Shader;
         std::shared_ptr<VertexArray> m_VertexArray;
+
+        OrthoCamera m_Camera;
 
     private:
         static Application *m_Instance; // 应用类单例
