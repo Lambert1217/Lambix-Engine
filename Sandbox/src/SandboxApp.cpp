@@ -2,26 +2,29 @@
 #include "imgui.h"
 
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
+#include "platform/OpenGL/OpenGLShader.h"
 
 using namespace Lambix;
 
 class ExampleLayer : public Lambix::Layer
 {
 public:
-	ExampleLayer() : Layer("Example"), m_Camera(-1.0f, 1.0f, 1.0f, -1.0f)
+	ExampleLayer() : Layer("Example"), m_Camera(-1.28f, 1.28f, 0.72f, -0.72f)
 	{
 		m_VertexArray.reset(VertexArray::Create());
 
 		float vertices[] = {
-			-0.5f, -0.5f, 0.0f, 1.0f, 0.8f, 0.8f, 1.0f,
-			-0.5f, 0.5f, 0.0f, 1.0f, 0.8f, 0.8f, 1.0f,
-			0.5f, -0.5f, 0.0f, 1.0f, 0.8f, 0.8f, 1.0f,
-			0.5f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f };
+			-0.5f, -0.5f, 0.0f,
+			-0.5f, 0.5f, 0.0f,
+			0.5f, -0.5f, 0.0f,
+			0.5f, 0.5f, 0.0f };
 		std::shared_ptr<VertexBuffer> m_VertexBuffer;
 		m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 		BufferLayout layout = {
-			{"aPos", ShaderDataType::Float3},
-			{"aColor", ShaderDataType::Float4} };
+			{"aPos", ShaderDataType::Float3}
+		};
 		m_VertexBuffer->SetLayout(layout);
 		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 
@@ -35,30 +38,28 @@ public:
 			#version 330 core
 			
 			layout(location = 0) in vec3 aPos;
-			layout(location = 1) in vec4 aColor;
 
 			uniform mat4 aViewProjection;
 			uniform mat4 aTransform;
-			out vec4 color;
+
 			void main()
 			{
 				gl_Position = aViewProjection * aTransform * vec4(aPos,1.0f);
-				color = aColor;
 			} 
 		)";
 		std::string fragmentSrc = R"(
 			#version 330 core
 			
 			layout(location = 0) out vec4 FragColor;
-			in vec4 color;
+			uniform vec3 uColor;
+
 			void main()
 			{
-				//FragColor = vec4(1.0f,0.8f,0.8f,1.0f);
-				FragColor = color,1.0f;
+				FragColor = vec4(uColor,1.0f);
 			} 
 		)";
 
-		m_Shader.reset(new Shader(vertexSrc, fragmentSrc));
+		m_Shader.reset(Shader::Create(vertexSrc, fragmentSrc));
 	}
 
 	void OnUpdate(Timestep ts) override
@@ -73,9 +74,9 @@ public:
 		else if (Input::IsKeyPressed(LB_KEY_S))
 			C_Position.y -= MoveSpeed * ts;
 
-		if (Input::IsKeyPressed(LB_KEY_PAGE_UP))
+		if (Input::IsKeyPressed(LB_KEY_Q))
 			C_Rotation -= RotateSpeed * ts;
-		else if (Input::IsKeyPressed(LB_KEY_PAGE_DOWN))
+		else if (Input::IsKeyPressed(LB_KEY_E))
 			C_Rotation += RotateSpeed * ts;
 
 		if (Input::IsKeyPressed(LB_KEY_SPACE))
@@ -93,11 +94,6 @@ public:
 		else if (Input::IsKeyPressed(LB_KEY_DOWN))
 			S_Position.y += MoveSpeed * ts;
 
-		if (Input::IsKeyPressed(LB_KEY_I))
-			S_Rotation -= RotateSpeed * ts;
-		else if (Input::IsKeyPressed(LB_KEY_O))
-			S_Rotation += RotateSpeed * ts;
-
 		RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
 		RenderCommand::Clear();
 
@@ -108,14 +104,15 @@ public:
 
 		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.2f));
 
-		for (int i = 0;i < 3;i++)
+		std::dynamic_pointer_cast<OpenGLShader>(m_Shader)->Bind();
+		std::dynamic_pointer_cast<OpenGLShader>(m_Shader)->UploadUniformFloat3("uColor", uColor);
+
+		for (int i = 0;i < 5;i++)
 		{
-			for (int j = 0;j < 3;j++)
+			for (int j = 0;j < 5;j++)
 			{
-				glm::vec3 pos(S_Position.x + i * 0.21f, S_Position.y + j * 0.21f, 0.0f);
-				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos);
-				transform = glm::rotate(transform, glm::radians(S_Rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-				transform *= scale;
+				glm::vec3 pos(S_Position.x + (i - 2) * 0.21f, S_Position.y + (j - 2) * 0.21f, 0.0f);
+				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
 				Renderer::Submit(m_Shader, m_VertexArray, transform);
 			}
 		}
@@ -127,7 +124,11 @@ public:
 	{}
 
 	void OnImGuiRender() override
-	{}
+	{
+		ImGui::Begin("Setting");
+		ImGui::ColorEdit3("Color Setting", glm::value_ptr(uColor));
+		ImGui::End();
+	}
 private:
 	std::shared_ptr<Shader> m_Shader;
 	std::shared_ptr<VertexArray> m_VertexArray;
@@ -135,13 +136,13 @@ private:
 	OrthoCamera m_Camera;
 
 	glm::vec3 S_Position = { 0.0f, 0.0f, 0.0f };
-	float S_Rotation = 0.0f;
-
 	glm::vec3 C_Position = { 0.0f, 0.0f, 0.0f };
 	float C_Rotation = 0.0f;
 
 	float MoveSpeed = 1.0f;
 	float RotateSpeed = 90.0f;
+
+	glm::vec3 uColor = { 1.0f, 0.8f, 0.8f };
 };
 
 class Sandbox : public Lambix::Application

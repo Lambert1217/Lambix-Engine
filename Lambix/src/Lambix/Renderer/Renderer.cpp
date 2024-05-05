@@ -1,5 +1,7 @@
 #include "Renderer.h"
 
+#include "platform/OpenGL/OpenGLShader.h"
+
 namespace Lambix
 {
     Renderer::SceneData *Renderer::m_SceneData = new Renderer::SceneData();
@@ -17,8 +19,8 @@ namespace Lambix
         , const glm::mat4& transform)
     {
         shader->Bind();
-        shader->UploadUniformMat4("aViewProjection", m_SceneData->ViewProjectionMatrix);
-        shader->UploadUniformMat4("aTransform", transform);
+        std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("aViewProjection", m_SceneData->ViewProjectionMatrix);
+        std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("aTransform", transform);
         RenderCommand::DrawIndexed(vertexArray);
         shader->Unbind();
     }
