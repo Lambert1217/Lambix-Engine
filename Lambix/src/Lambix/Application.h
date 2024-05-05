@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core.h"
+#include "Lambix/Core.h"
 #include "Events/Event.h"
 #include "Events/ApplicationEvent.h"
 #include "Window.h"
@@ -31,7 +31,7 @@ namespace Lambix
     private:
         bool OnWindowClose(WindowCloseEvent& e); // 窗口关闭事件处理函数
 
-        std::unique_ptr<Window> m_Window; // 智能指针 窗口类实例
+        Scope<Window> m_Window; // 智能指针 窗口类实例
         ImGuiLayer *m_ImGuiLayer;         // ImGuiLayer
         bool m_Running{true};             // 程序循环执行
         LayerStack m_LayerStack;          // 层 栈

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lambix/core.h"
+#include "Lambix/Core.h"
 #include "Layer.h"
 
 #include "vector"

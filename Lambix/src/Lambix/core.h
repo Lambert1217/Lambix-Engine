@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 // 断言
 #ifdef LB_ENABLE_ASSERTS
 #define LB_CLIENT_ASSERT(x, ...)                                   \
@@ -28,3 +29,12 @@
 
 // 绑定事件函数
 #define LB_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+
+namespace Lambix
+{
+    template<typename T>
+    using Scope = std::unique_ptr<T>;
+
+    template<typename T>
+    using Ref = std::shared_ptr<T>;
+}

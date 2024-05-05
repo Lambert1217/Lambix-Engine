@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lambix/core.h"
+#include "Lambix/Core.h"
 
 /*
  *  实现 Input polling

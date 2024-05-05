@@ -1,7 +1,7 @@
 #include "Buffer.h"
 
 #include "Renderer.h"
-#include "Lambix/core.h"
+#include "Lambix/Core.h"
 #include "Lambix/Log.h"
 
 #include "platform/OpenGL/OpenGLBuffer.h"

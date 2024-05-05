@@ -18,7 +18,7 @@ namespace Lambix
 		m_Instance = this;
 
 		// 窗口类创建 设置回调
-		m_Window = std::unique_ptr<Window>(Window::Create());
+		m_Window = Scope<Window>(Window::Create());
 		m_Window->SetEventCallback(LB_BIND_EVENT_FN(Application::OnEvent));
 
 		// ImGui 图层创建 附加
