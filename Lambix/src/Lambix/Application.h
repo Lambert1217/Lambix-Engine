@@ -35,6 +35,7 @@ namespace Lambix
         ImGuiLayer *m_ImGuiLayer;         // ImGuiLayer
         bool m_Running{true};             // 程序循环执行
         LayerStack m_LayerStack;          // 层 栈
+        float LastFrameTime{ 0.0f };
     private:
         static Application *m_Instance; // 应用类单例
     };

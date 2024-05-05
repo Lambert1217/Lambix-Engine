@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "Log.h"
 #include "Input.h"
+#include "Lambix/Core/Timestep.h"
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -33,10 +34,14 @@ namespace Lambix
 	{
 		while (m_Running)
 		{
+			float CurrentTime = (float)glfwGetTime();
+			Timestep timestep = CurrentTime - LastFrameTime;
+			LastFrameTime = CurrentTime;
+
 			// 遍历各层级 执行更新
 			for (Layer *layer : m_LayerStack)
 			{
-				layer->OnUpdate();
+				layer->OnUpdate(timestep);
 			}
 
 			// imgui 绘制

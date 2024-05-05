@@ -13,6 +13,8 @@
 #include "Lambix/KeyCodes.h"
 #include "Lambix/MouseButtonCodes.h"
 
+#include "Lambix/Core/Timestep.h"
+
 //---Renderer-----------------------------
 
 #include "Lambix/Renderer/Renderer.h"
