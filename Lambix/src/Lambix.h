@@ -9,10 +9,20 @@
 #include "Lambix/Layer.h"
 #include "Lambix/ImGui/ImGuiLayer.h"
 
-
 #include "Lambix/Input.h"
 #include "Lambix/KeyCodes.h"
 #include "Lambix/MouseButtonCodes.h"
+
+//---Renderer-----------------------------
+
+#include "Lambix/Renderer/Renderer.h"
+#include "Lambix/Renderer/RenderCommand.h"
+
+#include "Lambix/Renderer/Buffer.h"
+#include "Lambix/Renderer/Shader.h"
+#include "Lambix/Renderer/VertexArray.h"
+
+#include "Lambix/Renderer/OrthoCamera.h"
 
 //---Enter Point---------------------------
 
