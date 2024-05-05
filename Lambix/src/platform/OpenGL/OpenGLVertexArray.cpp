@@ -75,7 +75,6 @@ namespace Lambix
         }
 
         m_VertexBuffers.push_back(vertexBuffer);
-        glBindVertexArray(0);
     }
 
     void OpenGLVertexArray::SetIndexBuffer(const std::shared_ptr<IndexBuffer> indexBuffer)
@@ -84,6 +83,5 @@ namespace Lambix
         indexBuffer->Bind();
 
         m_IndexBuffer = indexBuffer;
-        glBindVertexArray(0);
     }
 }

@@ -7,10 +7,6 @@
 #include "LayerStack.h"
 #include "ImGui/ImGuiLayer.h"
 
-#include "Lambix/Renderer/Shader.h"
-#include "Lambix/Renderer/Buffer.h"
-#include "Lambix/Renderer/VertexArray.h"
-
 /*
     应用类 单例
 */
@@ -33,16 +29,13 @@ namespace Lambix
         inline Window &GetWindow() { return *m_Window; }                 // 获取窗口类实例
         inline static Application &GetInstance() { return *m_Instance; } // 获取应用类单例
     private:
-        bool OnWindowClose(WindowCloseEvent &e); // 窗口关闭事件处理函数
+        bool OnWindowClose(WindowCloseEvent& e); // 窗口关闭事件处理函数
 
         std::unique_ptr<Window> m_Window; // 智能指针 窗口类实例
         ImGuiLayer *m_ImGuiLayer;         // ImGuiLayer
         bool m_Running{true};             // 程序循环执行
         LayerStack m_LayerStack;          // 层 栈
-
-        std::shared_ptr<Shader> m_Shader;
-        std::shared_ptr<VertexArray> m_VertexArray;
-
+        float LastFrameTime{ 0.0f };
     private:
         static Application *m_Instance; // 应用类单例
     };

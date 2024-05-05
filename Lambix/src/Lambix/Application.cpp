@@ -3,13 +3,13 @@
 #include "Application.h"
 #include "Log.h"
 #include "Input.h"
+#include "Lambix/Core/Timestep.h"
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
 namespace Lambix
 {
-
 	Application *Application::m_Instance = nullptr;
 
 	Application::Application()
@@ -24,54 +24,6 @@ namespace Lambix
 		// ImGui 图层创建 附加
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
-
-		//---------------------------
-		m_VertexArray.reset(VertexArray::Create());
-
-		float vertices[] = {
-			-0.5f, -0.5f, 0.0f, 1.0f, 0.8f, 0.8f, 1.0f,
-			-0.5f, 0.5f, 0.0f, 1.0f, 0.8f, 0.8f, 1.0f,
-			0.5f, -0.5f, 0.0f, 1.0f, 0.8f, 0.8f, 1.0f,
-			0.5f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f};
-		std::shared_ptr<VertexBuffer> m_VertexBuffer;
-		m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
-		BufferLayout layout = {
-			{"aPos", ShaderDataType::Float3},
-			{"aColor", ShaderDataType::Float4}};
-		m_VertexBuffer->SetLayout(layout);
-		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
-
-		uint32_t indices[] = {0, 1, 2, 1, 2, 3};
-		std::shared_ptr<IndexBuffer> m_IndexBuffer;
-		m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
-		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
-
-		// shader
-		std::string vertexSrc = R"(
-			#version 330 core
-			
-			layout(location = 0) in vec3 aPos;
-			layout(location = 1) in vec4 aColor;
-			out vec4 color;
-			void main()
-			{
-				gl_Position = vec4(aPos,1.0f);
-				color = aColor;
-			} 
-		)";
-		std::string fragmentSrc = R"(
-			#version 330 core
-			
-			layout(location = 0) out vec4 FragColor;
-			in vec4 color;
-			void main()
-			{
-				//FragColor = vec4(1.0f,0.8f,0.8f,1.0f);
-				FragColor = color,1.0f;
-			} 
-		)";
-
-		m_Shader.reset(new Shader(vertexSrc, fragmentSrc));
 	}
 
 	Application::~Application()
@@ -82,20 +34,17 @@ namespace Lambix
 	{
 		while (m_Running)
 		{
-			glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
-
-			m_Shader->Bind();
-			m_VertexArray->Bind();
-			glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
-			m_Shader->Unbind();
+			float CurrentTime = (float)glfwGetTime();
+			Timestep timestep = CurrentTime - LastFrameTime;
+			LastFrameTime = CurrentTime;
 
 			// 遍历各层级 执行更新
 			for (Layer *layer : m_LayerStack)
 			{
-				layer->OnUpdate();
+				layer->OnUpdate(timestep);
 			}
 
+			// imgui 绘制
 			m_ImGuiLayer->Begin();
 			for (Layer *layer : m_LayerStack)
 			{

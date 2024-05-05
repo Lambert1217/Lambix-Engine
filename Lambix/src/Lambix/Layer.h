@@ -3,6 +3,8 @@
 #include "Lambix/core.h"
 #include "Lambix/Events/Event.h"
 
+#include "Lambix/Core/Timestep.h"
+
 namespace Lambix
 {
 
@@ -14,7 +16,7 @@ namespace Lambix
 
 		virtual void OnAttach() {}			  // 图层附加
 		virtual void OnDetach() {}			  // 图层分离
-		virtual void OnUpdate() {}			  // 图层更新
+		virtual void OnUpdate(Timestep ts) {}			  // 图层更新
 		virtual void OnImGuiRender() {}		  // 在 ImGui 渲染时调用
 		virtual void OnEvent(Event &event) {} // 事件回调
 
