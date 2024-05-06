@@ -13,6 +13,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${ROOT_PATH}/bin/${CMAKE_BUILD_TYPE})  # 可�
 # 代码文件
 file(GLOB_RECURSE SANDBOX_SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/src/*.cpp")
 
+# 将资源文件拷贝到构建目录
+file(GLOB ASSETS "${CMAKE_CURRENT_LIST_DIR}/assets")
+file(COPY ${ASSETS} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
 add_executable(${PROJECT_NAME} ${SANDBOX_SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME}

@@ -9,15 +9,15 @@
 class ExampleLayer : public Lambix::Layer
 {
 public:
-	ExampleLayer() : Layer("Example"), m_Camera(-1.28f, 1.28f, 0.72f, -0.72f)
+	ExampleLayer() : Layer("Example"), m_Camera(-1.0f, 1.0f, 1.0f, -1.0f)
 	{
 		m_VertexArray = Lambix::VertexArray::Create();
 
 		float vertices[] = {
-			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-			-0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-			0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-			0.5f, 0.5f, 0.0f, 1.0f, 1.0f };
+			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+			-1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+			1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+			1.0f, 1.0f, 0.0f, 1.0f, 1.0f };
 		Lambix::Ref<Lambix::VertexBuffer> m_VertexBuffer;
 		m_VertexBuffer = Lambix::VertexBuffer::Create(vertices, sizeof(vertices));
 		Lambix::BufferLayout layout = {
@@ -84,14 +84,17 @@ public:
 			layout(location = 0) out vec4 FragColor;
 
 			in vec2 vTexCoord;
+			uniform sampler2D u_Texture;
 
 			void main()
 			{
-				FragColor = vec4(vTexCoord,0.0f,1.0f);
+				FragColor = texture(u_Texture, vTexCoord);
 			} 
 		)";
 
 		m_TextureShader = Lambix::Shader::Create(TextureShaderVertexSrc, TextureShaderFragmentSrc);
+
+		m_Texture2D = Lambix::Texture2D::Create("assets/textures/test.jpg");
 	}
 
 	void OnUpdate(Lambix::Timestep ts) override
@@ -134,22 +137,18 @@ public:
 
 		Lambix::Renderer::BeginScene(m_Camera);
 
-		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.2f));
-
 		std::dynamic_pointer_cast<Lambix::OpenGLShader>(m_ColorShader)->Bind();
 		std::dynamic_pointer_cast<Lambix::OpenGLShader>(m_ColorShader)->UploadUniformFloat3("uColor", uColor);
 
-		for (int i = 0;i < 5;i++)
-		{
-			for (int j = 0;j < 5;j++)
-			{
-				glm::vec3 pos(S_Position.x + (i - 2) * 0.21f, S_Position.y + (j - 2) * 0.21f, 0.0f);
-				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
-				Lambix::Renderer::Submit(m_ColorShader, m_VertexArray, transform);
-			}
-		}
+		std::dynamic_pointer_cast<Lambix::OpenGLShader>(m_TextureShader)->Bind();
+		std::dynamic_pointer_cast<Lambix::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
 
-		Lambix::Renderer::Submit(m_TextureShader, m_VertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(0.8f)));
+		m_Texture2D->Bind();
+		Lambix::Renderer::Submit(m_TextureShader, m_VertexArray);
+
+		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.3f));
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), S_Position) * scale;
+		Lambix::Renderer::Submit(m_ColorShader, m_VertexArray, transform);
 
 		Lambix::Renderer::EndScene();
 	}
@@ -167,6 +166,8 @@ private:
 	Lambix::Ref<Lambix::Shader> m_ColorShader;
 	Lambix::Ref<Lambix::Shader> m_TextureShader;
 	Lambix::Ref<Lambix::VertexArray> m_VertexArray;
+
+	Lambix::Ref<Lambix::Texture2D> m_Texture2D;
 
 	Lambix::OrthoCamera m_Camera;
 
