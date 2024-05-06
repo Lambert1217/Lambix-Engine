@@ -11,28 +11,29 @@ class ExampleLayer : public Lambix::Layer
 public:
 	ExampleLayer() : Layer("Example"), m_Camera(-1.28f, 1.28f, 0.72f, -0.72f)
 	{
-		m_VertexArray.reset(Lambix::VertexArray::Create());
+		m_VertexArray = Lambix::VertexArray::Create();
 
 		float vertices[] = {
-			-0.5f, -0.5f, 0.0f,
-			-0.5f, 0.5f, 0.0f,
-			0.5f, -0.5f, 0.0f,
-			0.5f, 0.5f, 0.0f };
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+			-0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+			0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+			0.5f, 0.5f, 0.0f, 1.0f, 1.0f };
 		Lambix::Ref<Lambix::VertexBuffer> m_VertexBuffer;
-		m_VertexBuffer.reset(Lambix::VertexBuffer::Create(vertices, sizeof(vertices)));
+		m_VertexBuffer = Lambix::VertexBuffer::Create(vertices, sizeof(vertices));
 		Lambix::BufferLayout layout = {
-			{"aPos", Lambix::ShaderDataType::Float3}
+			{"aPos", Lambix::ShaderDataType::Float3},
+			{"aTexCoord", Lambix::ShaderDataType::Float2}
 		};
 		m_VertexBuffer->SetLayout(layout);
 		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 
 		uint32_t indices[] = { 0, 1, 2, 1, 2, 3 };
 		Lambix::Ref<Lambix::IndexBuffer> m_IndexBuffer;
-		m_IndexBuffer.reset(Lambix::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+		m_IndexBuffer = Lambix::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
 		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
 
-		// shader
-		std::string vertexSrc = R"(
+		// m_ColorShader
+		std::string ColorShaderVertexSrc = R"(
 			#version 330 core
 			
 			layout(location = 0) in vec3 aPos;
@@ -45,7 +46,7 @@ public:
 				gl_Position = aViewProjection * aTransform * vec4(aPos,1.0f);
 			} 
 		)";
-		std::string fragmentSrc = R"(
+		std::string ColorShaderFragmentSrc = R"(
 			#version 330 core
 			
 			layout(location = 0) out vec4 FragColor;
@@ -57,7 +58,40 @@ public:
 			} 
 		)";
 
-		m_Shader.reset(Lambix::Shader::Create(vertexSrc, fragmentSrc));
+		m_ColorShader = Lambix::Shader::Create(ColorShaderVertexSrc, ColorShaderFragmentSrc);
+
+		// m_ColorShader
+		std::string TextureShaderVertexSrc = R"(
+			#version 330 core
+			
+			layout(location = 0) in vec3 aPos;
+			layout(location = 1) in vec2 aTexCoord;
+
+			out vec2 vTexCoord;
+
+			uniform mat4 aViewProjection;
+			uniform mat4 aTransform;
+
+			void main()
+			{
+				vTexCoord = aTexCoord;
+				gl_Position = aViewProjection * aTransform * vec4(aPos,1.0f);
+			} 
+		)";
+		std::string TextureShaderFragmentSrc = R"(
+			#version 330 core
+			
+			layout(location = 0) out vec4 FragColor;
+
+			in vec2 vTexCoord;
+
+			void main()
+			{
+				FragColor = vec4(vTexCoord,0.0f,1.0f);
+			} 
+		)";
+
+		m_TextureShader = Lambix::Shader::Create(TextureShaderVertexSrc, TextureShaderFragmentSrc);
 	}
 
 	void OnUpdate(Lambix::Timestep ts) override
@@ -102,8 +136,8 @@ public:
 
 		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.2f));
 
-		std::dynamic_pointer_cast<Lambix::OpenGLShader>(m_Shader)->Bind();
-		std::dynamic_pointer_cast<Lambix::OpenGLShader>(m_Shader)->UploadUniformFloat3("uColor", uColor);
+		std::dynamic_pointer_cast<Lambix::OpenGLShader>(m_ColorShader)->Bind();
+		std::dynamic_pointer_cast<Lambix::OpenGLShader>(m_ColorShader)->UploadUniformFloat3("uColor", uColor);
 
 		for (int i = 0;i < 5;i++)
 		{
@@ -111,9 +145,11 @@ public:
 			{
 				glm::vec3 pos(S_Position.x + (i - 2) * 0.21f, S_Position.y + (j - 2) * 0.21f, 0.0f);
 				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
-				Lambix::Renderer::Submit(m_Shader, m_VertexArray, transform);
+				Lambix::Renderer::Submit(m_ColorShader, m_VertexArray, transform);
 			}
 		}
+
+		Lambix::Renderer::Submit(m_TextureShader, m_VertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(0.8f)));
 
 		Lambix::Renderer::EndScene();
 	}
@@ -128,7 +164,8 @@ public:
 		ImGui::End();
 	}
 private:
-	Lambix::Ref<Lambix::Shader> m_Shader;
+	Lambix::Ref<Lambix::Shader> m_ColorShader;
+	Lambix::Ref<Lambix::Shader> m_TextureShader;
 	Lambix::Ref<Lambix::VertexArray> m_VertexArray;
 
 	Lambix::OrthoCamera m_Camera;
