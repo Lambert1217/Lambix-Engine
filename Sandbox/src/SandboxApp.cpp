@@ -9,7 +9,7 @@
 class ExampleLayer : public Lambix::Layer
 {
 public:
-	ExampleLayer() : Layer("Example"), m_Camera(-1.0f, 1.0f, 1.0f, -1.0f)
+	ExampleLayer() : Layer("Example"), m_Camera(-1.0f, 1.0f, 1.0f, -1.0f), m_ShaderLibrary(std::make_shared<Lambix::ShaderLibrary>())
 	{
 		m_VertexArray = Lambix::VertexArray::Create();
 
@@ -32,7 +32,7 @@ public:
 		m_IndexBuffer = Lambix::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
 		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
 
-		m_TextureShader = Lambix::Shader::Create("assets/shaders/Texture2D.glsl");
+		m_ShaderLibrary->Load("assets/shaders/Texture2D.glsl");
 
 		m_BackgroundTexture = Lambix::Texture2D::Create("assets/textures/test.jpg");
 		m_PlayerTexture = Lambix::Texture2D::Create("assets/textures/peashooter_run_1.png");
@@ -78,16 +78,17 @@ public:
 
 		Lambix::Renderer::BeginScene(m_Camera);
 
-		std::dynamic_pointer_cast<Lambix::OpenGLShader>(m_TextureShader)->Bind();
-		std::dynamic_pointer_cast<Lambix::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
+		Lambix::Ref<Lambix::Shader> Texture2D = m_ShaderLibrary->Get("Texture2D");
+		std::dynamic_pointer_cast<Lambix::OpenGLShader>(Texture2D)->Bind();
+		std::dynamic_pointer_cast<Lambix::OpenGLShader>(Texture2D)->UploadUniformInt("u_Texture", 0);
 
 		m_BackgroundTexture->Bind();
-		Lambix::Renderer::Submit(m_TextureShader, m_VertexArray);
+		Lambix::Renderer::Submit(Texture2D, m_VertexArray);
 
 		m_PlayerTexture->Bind();
 		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.3f / (1.28f / 0.72f), 0.3f, 0.3f));
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), S_Position) * scale;
-		Lambix::Renderer::Submit(m_TextureShader, m_VertexArray, transform);
+		Lambix::Renderer::Submit(Texture2D, m_VertexArray, transform);
 
 		Lambix::Renderer::EndScene();
 	}
@@ -102,7 +103,7 @@ public:
 		// ImGui::End();
 	}
 private:
-	Lambix::Ref<Lambix::Shader> m_TextureShader;
+	Lambix::Ref<Lambix::ShaderLibrary> m_ShaderLibrary;
 	Lambix::Ref<Lambix::VertexArray> m_VertexArray;
 
 	Lambix::Ref<Lambix::Texture2D> m_BackgroundTexture, m_PlayerTexture;
