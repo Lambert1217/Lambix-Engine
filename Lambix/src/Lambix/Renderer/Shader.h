@@ -15,7 +15,7 @@ namespace Lambix
         virtual void Unbind() const = 0;
 
         static Ref<Shader> Create(const std::string& vertexSource, const std::string& fragmentSource);
-
+        static Ref<Shader> Create(const std::string& filepath);
     private:
         uint32_t m_RendererID;
     };

@@ -1,14 +1,19 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 #include "Lambix/Renderer/Shader.h"
 #include "glm/glm.hpp"
+
+//TODO: 删除
+typedef unsigned int GLenum;
 
 namespace Lambix
 {
     class OpenGLShader : public Shader
     {
     public:
+        OpenGLShader(const std::string& filepath);
         OpenGLShader(const std::string& vertexSource, const std::string& fragmentSource);
         virtual ~OpenGLShader();
 
@@ -24,7 +29,10 @@ namespace Lambix
 
         void UploadUniformMat3(const std::string& name, const glm::mat3& matrix);
         void UploadUniformMat4(const std::string& name, const glm::mat4& matrix);
-
+    private:
+        void Compile(std::unordered_map<GLenum, std::string> shaderSource);
+        std::string ReadFile(const std::string& filepath);
+        std::unordered_map<GLenum, std::string> PreProcess(const std::string& SourceCode);
     private:
         uint32_t m_RendererID;
     };
