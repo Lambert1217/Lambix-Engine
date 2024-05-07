@@ -94,7 +94,8 @@ public:
 
 		m_TextureShader = Lambix::Shader::Create(TextureShaderVertexSrc, TextureShaderFragmentSrc);
 
-		m_Texture2D = Lambix::Texture2D::Create("assets/textures/test.jpg");
+		m_BackgroundTexture = Lambix::Texture2D::Create("assets/textures/test.jpg");
+		m_PlayerTexture = Lambix::Texture2D::Create("assets/textures/peashooter_run_1.png");
 	}
 
 	void OnUpdate(Lambix::Timestep ts) override
@@ -143,12 +144,13 @@ public:
 		std::dynamic_pointer_cast<Lambix::OpenGLShader>(m_TextureShader)->Bind();
 		std::dynamic_pointer_cast<Lambix::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
 
-		m_Texture2D->Bind();
+		m_BackgroundTexture->Bind();
 		Lambix::Renderer::Submit(m_TextureShader, m_VertexArray);
 
-		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.3f));
+		m_PlayerTexture->Bind();
+		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.3f / (1.28f / 0.72f), 0.3f, 0.3f));
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), S_Position) * scale;
-		Lambix::Renderer::Submit(m_ColorShader, m_VertexArray, transform);
+		Lambix::Renderer::Submit(m_TextureShader, m_VertexArray, transform);
 
 		Lambix::Renderer::EndScene();
 	}
@@ -167,7 +169,7 @@ private:
 	Lambix::Ref<Lambix::Shader> m_TextureShader;
 	Lambix::Ref<Lambix::VertexArray> m_VertexArray;
 
-	Lambix::Ref<Lambix::Texture2D> m_Texture2D;
+	Lambix::Ref<Lambix::Texture2D> m_BackgroundTexture, m_PlayerTexture;
 
 	Lambix::OrthoCamera m_Camera;
 

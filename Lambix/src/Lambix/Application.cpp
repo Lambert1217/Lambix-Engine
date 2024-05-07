@@ -8,6 +8,8 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
+#include "Lambix/Renderer/Renderer.h"
+
 namespace Lambix
 {
 	Application *Application::m_Instance = nullptr;
@@ -20,6 +22,8 @@ namespace Lambix
 		// 窗口类创建 设置回调
 		m_Window = Window::Create();
 		m_Window->SetEventCallback(LB_BIND_EVENT_FN(Application::OnEvent));
+
+		Renderer::Init();
 
 		// ImGui 图层创建 附加
 		m_ImGuiLayer = new ImGuiLayer();

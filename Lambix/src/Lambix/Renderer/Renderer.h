@@ -11,6 +11,8 @@ namespace Lambix
     public:
         inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 
+        static void Init();
+
         static void BeginScene(OrthoCamera &camera);
         static void EndScene();
 
