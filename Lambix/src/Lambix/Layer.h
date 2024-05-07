@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lambix/core.h"
+#include "Lambix/Core.h"
 #include "Lambix/Events/Event.h"
 
 #include "Lambix/Core/Timestep.h"

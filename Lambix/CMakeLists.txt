@@ -33,6 +33,7 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/glm
+    ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/stb_image
 )
 
 # 链接库

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "lbpch.h"
-#include "Lambix/core.h"
+#include "Lambix/Core.h"
 
 namespace Lambix
 {

@@ -1,14 +1,14 @@
 #include "Buffer.h"
 
 #include "Renderer.h"
-#include "Lambix/core.h"
+#include "Lambix/Core.h"
 #include "Lambix/Log.h"
 
 #include "platform/OpenGL/OpenGLBuffer.h"
 
 namespace Lambix
 {
-    VertexBuffer *VertexBuffer::Create(float *vertices, uint32_t size)
+    Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size)
     {
         switch (Renderer::GetAPI())
         {
@@ -16,13 +16,13 @@ namespace Lambix
             LB_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
             return nullptr;
         case RendererAPI::API::OpenGL:
-            return new OpenGLVertexBuffer(vertices, size);
+            return std::make_shared<OpenGLVertexBuffer>(vertices, size);
         default:
             LB_CORE_ASSERT(false, "Unknown RendererAPI!");
             return nullptr;
         }
     }
-    IndexBuffer *IndexBuffer::Create(uint32_t *indices, uint32_t count)
+    Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count)
     {
         switch (Renderer::GetAPI())
         {
@@ -30,7 +30,7 @@ namespace Lambix
             LB_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
             return nullptr;
         case RendererAPI::API::OpenGL:
-            return new OpenGLIndexBuffer(indices, count);
+            return std::make_shared<OpenGLIndexBuffer>(indices, count);
         default:
             LB_CORE_ASSERT(false, "Unknown RendererAPI!");
             return nullptr;

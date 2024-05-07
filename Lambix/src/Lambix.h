@@ -22,6 +22,7 @@
 
 #include "Lambix/Renderer/Buffer.h"
 #include "Lambix/Renderer/Shader.h"
+#include "Lambix/Renderer/Texture.h"
 #include "Lambix/Renderer/VertexArray.h"
 
 #include "Lambix/Renderer/OrthoCamera.h"

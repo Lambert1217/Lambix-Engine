@@ -2,141 +2,115 @@
 #include "imgui.h"
 
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
-using namespace Lambix;
+#include "platform/OpenGL/OpenGLShader.h"
 
 class ExampleLayer : public Lambix::Layer
 {
 public:
-	ExampleLayer() : Layer("Example"), m_Camera(-1.0f, 1.0f, 1.0f, -1.0f)
+	ExampleLayer() : Layer("Example"), m_Camera(-1.0f, 1.0f, 1.0f, -1.0f), m_ShaderLibrary(std::make_shared<Lambix::ShaderLibrary>())
 	{
-		m_VertexArray.reset(VertexArray::Create());
+		m_VertexArray = Lambix::VertexArray::Create();
 
 		float vertices[] = {
-			-0.5f, -0.5f, 0.0f, 1.0f, 0.8f, 0.8f, 1.0f,
-			-0.5f, 0.5f, 0.0f, 1.0f, 0.8f, 0.8f, 1.0f,
-			0.5f, -0.5f, 0.0f, 1.0f, 0.8f, 0.8f, 1.0f,
-			0.5f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f };
-		std::shared_ptr<VertexBuffer> m_VertexBuffer;
-		m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
-		BufferLayout layout = {
-			{"aPos", ShaderDataType::Float3},
-			{"aColor", ShaderDataType::Float4} };
+			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+			-1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+			1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+			1.0f, 1.0f, 0.0f, 1.0f, 1.0f };
+		Lambix::Ref<Lambix::VertexBuffer> m_VertexBuffer;
+		m_VertexBuffer = Lambix::VertexBuffer::Create(vertices, sizeof(vertices));
+		Lambix::BufferLayout layout = {
+			{"aPos", Lambix::ShaderDataType::Float3},
+			{"aTexCoord", Lambix::ShaderDataType::Float2}
+		};
 		m_VertexBuffer->SetLayout(layout);
 		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 
 		uint32_t indices[] = { 0, 1, 2, 1, 2, 3 };
-		std::shared_ptr<IndexBuffer> m_IndexBuffer;
-		m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+		Lambix::Ref<Lambix::IndexBuffer> m_IndexBuffer;
+		m_IndexBuffer = Lambix::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
 		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
 
-		// shader
-		std::string vertexSrc = R"(
-			#version 330 core
-			
-			layout(location = 0) in vec3 aPos;
-			layout(location = 1) in vec4 aColor;
+		m_ShaderLibrary->Load("assets/shaders/Texture2D.glsl");
 
-			uniform mat4 aViewProjection;
-			uniform mat4 aTransform;
-			out vec4 color;
-			void main()
-			{
-				gl_Position = aViewProjection * aTransform * vec4(aPos,1.0f);
-				color = aColor;
-			} 
-		)";
-		std::string fragmentSrc = R"(
-			#version 330 core
-			
-			layout(location = 0) out vec4 FragColor;
-			in vec4 color;
-			void main()
-			{
-				//FragColor = vec4(1.0f,0.8f,0.8f,1.0f);
-				FragColor = color,1.0f;
-			} 
-		)";
-
-		m_Shader.reset(new Shader(vertexSrc, fragmentSrc));
+		m_BackgroundTexture = Lambix::Texture2D::Create("assets/textures/test.jpg");
+		m_PlayerTexture = Lambix::Texture2D::Create("assets/textures/peashooter_run_1.png");
 	}
 
-	void OnUpdate(Timestep ts) override
+	void OnUpdate(Lambix::Timestep ts) override
 	{
 		// camera
-		if (Input::IsKeyPressed(LB_KEY_A))
+		if (Lambix::Input::IsKeyPressed(LB_KEY_A))
 			C_Position.x += MoveSpeed * ts;
-		else if (Input::IsKeyPressed(LB_KEY_D))
+		else if (Lambix::Input::IsKeyPressed(LB_KEY_D))
 			C_Position.x -= MoveSpeed * ts;
-		if (Input::IsKeyPressed(LB_KEY_W))
+		if (Lambix::Input::IsKeyPressed(LB_KEY_W))
 			C_Position.y += MoveSpeed * ts;
-		else if (Input::IsKeyPressed(LB_KEY_S))
+		else if (Lambix::Input::IsKeyPressed(LB_KEY_S))
 			C_Position.y -= MoveSpeed * ts;
 
-		if (Input::IsKeyPressed(LB_KEY_PAGE_UP))
+		if (Lambix::Input::IsKeyPressed(LB_KEY_Q))
 			C_Rotation -= RotateSpeed * ts;
-		else if (Input::IsKeyPressed(LB_KEY_PAGE_DOWN))
+		else if (Lambix::Input::IsKeyPressed(LB_KEY_E))
 			C_Rotation += RotateSpeed * ts;
 
-		if (Input::IsKeyPressed(LB_KEY_SPACE))
+		if (Lambix::Input::IsKeyPressed(LB_KEY_SPACE))
 		{
 			C_Position = { 0.0f, 0.0f, 0.0f };
 			C_Rotation = 0.0f;
 		}
 		// square
-		if (Input::IsKeyPressed(LB_KEY_LEFT))
+		if (Lambix::Input::IsKeyPressed(LB_KEY_LEFT))
 			S_Position.x -= MoveSpeed * ts;
-		else if (Input::IsKeyPressed(LB_KEY_RIGHT))
+		else if (Lambix::Input::IsKeyPressed(LB_KEY_RIGHT))
 			S_Position.x += MoveSpeed * ts;
-		if (Input::IsKeyPressed(LB_KEY_UP))
+		if (Lambix::Input::IsKeyPressed(LB_KEY_UP))
 			S_Position.y -= MoveSpeed * ts;
-		else if (Input::IsKeyPressed(LB_KEY_DOWN))
+		else if (Lambix::Input::IsKeyPressed(LB_KEY_DOWN))
 			S_Position.y += MoveSpeed * ts;
 
-		if (Input::IsKeyPressed(LB_KEY_I))
-			S_Rotation -= RotateSpeed * ts;
-		else if (Input::IsKeyPressed(LB_KEY_O))
-			S_Rotation += RotateSpeed * ts;
-
-		RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
-		RenderCommand::Clear();
+		Lambix::RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
+		Lambix::RenderCommand::Clear();
 
 		m_Camera.SetPosition(C_Position);
 		m_Camera.SetRotation(C_Rotation);
 
-		Renderer::BeginScene(m_Camera);
+		Lambix::Renderer::BeginScene(m_Camera);
 
-		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.2f));
+		Lambix::Ref<Lambix::Shader> Texture2D = m_ShaderLibrary->Get("Texture2D");
+		std::dynamic_pointer_cast<Lambix::OpenGLShader>(Texture2D)->Bind();
+		std::dynamic_pointer_cast<Lambix::OpenGLShader>(Texture2D)->UploadUniformInt("u_Texture", 0);
 
-		for (int i = 0;i < 3;i++)
-		{
-			for (int j = 0;j < 3;j++)
-			{
-				glm::vec3 pos(S_Position.x + i * 0.21f, S_Position.y + j * 0.21f, 0.0f);
-				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos);
-				transform = glm::rotate(transform, glm::radians(S_Rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-				transform *= scale;
-				Renderer::Submit(m_Shader, m_VertexArray, transform);
-			}
-		}
+		m_BackgroundTexture->Bind();
+		Lambix::Renderer::Submit(Texture2D, m_VertexArray);
 
-		Renderer::EndScene();
+		m_PlayerTexture->Bind();
+		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.3f / (1.28f / 0.72f), 0.3f, 0.3f));
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), S_Position) * scale;
+		Lambix::Renderer::Submit(Texture2D, m_VertexArray, transform);
+
+		Lambix::Renderer::EndScene();
 	}
 
 	void OnEvent(Lambix::Event& event) override
 	{}
 
 	void OnImGuiRender() override
-	{}
+	{
+		// ImGui::Begin("Setting");
+		// ImGui::ColorEdit3("Color Setting", glm::value_ptr(uColor));
+		// ImGui::End();
+	}
 private:
-	std::shared_ptr<Shader> m_Shader;
-	std::shared_ptr<VertexArray> m_VertexArray;
+	Lambix::Ref<Lambix::ShaderLibrary> m_ShaderLibrary;
+	Lambix::Ref<Lambix::VertexArray> m_VertexArray;
 
-	OrthoCamera m_Camera;
+	Lambix::Ref<Lambix::Texture2D> m_BackgroundTexture, m_PlayerTexture;
+
+	Lambix::OrthoCamera m_Camera;
 
 	glm::vec3 S_Position = { 0.0f, 0.0f, 0.0f };
-	float S_Rotation = 0.0f;
-
 	glm::vec3 C_Position = { 0.0f, 0.0f, 0.0f };
 	float C_Rotation = 0.0f;
 
