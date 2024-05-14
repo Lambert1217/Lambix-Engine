@@ -12,6 +12,8 @@ namespace Lambix
     OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
         : m_Path(path)
     {
+        stbi_set_flip_vertically_on_load(true);
+
         int width, height, channels;
         stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
         LB_CLIENT_ASSERT(data, "Failed to load image!");

@@ -15,6 +15,8 @@
 
 #include "Lambix/Core/Timestep.h"
 
+#include "Lambix/OrthoCameraController.h"
+
 //---Renderer-----------------------------
 
 #include "Lambix/Renderer/Renderer.h"
@@ -24,8 +26,6 @@
 #include "Lambix/Renderer/Shader.h"
 #include "Lambix/Renderer/Texture.h"
 #include "Lambix/Renderer/VertexArray.h"
-
-#include "Lambix/Renderer/OrthoCamera.h"
 
 //---Enter Point---------------------------
 
