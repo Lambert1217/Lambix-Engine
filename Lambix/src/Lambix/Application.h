@@ -30,14 +30,16 @@ namespace Lambix
         inline static Application &GetInstance() { return *m_Instance; } // 获取应用类单例
     private:
         bool OnWindowClose(WindowCloseEvent& e); // 窗口关闭事件处理函数
+        bool OnWindowResize(WindowResizeEvent& e); // 窗口关闭事件处理函数
+    private:
+        static Application* m_Instance; // 应用类单例
 
         Scope<Window> m_Window; // 智能指针 窗口类实例
         ImGuiLayer *m_ImGuiLayer;         // ImGuiLayer
         bool m_Running{true};             // 程序循环执行
         LayerStack m_LayerStack;          // 层 栈
         float LastFrameTime{ 0.0f };
-    private:
-        static Application *m_Instance; // 应用类单例
+        bool m_Minsize = false;
     };
 
     Application *CreateApplication(); // 创建应用  由用户定义

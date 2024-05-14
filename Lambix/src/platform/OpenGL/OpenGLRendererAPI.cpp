@@ -2,6 +2,8 @@
 
 #include "glad/glad.h"
 
+#include "Lambix/Log.h"
+
 namespace Lambix
 {
     void OpenGLRendererAPI::Init()
@@ -17,6 +19,10 @@ namespace Lambix
     void OpenGLRendererAPI::SetClearColor(const glm::vec4 &color)
     {
         glClearColor(color.x, color.y, color.z, color.w);
+    }
+    void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+    {
+        glViewport(x, y, width, height);
     }
     void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray)
     {

@@ -42,10 +42,13 @@ namespace Lambix
 			Timestep timestep = CurrentTime - LastFrameTime;
 			LastFrameTime = CurrentTime;
 
-			// 遍历各层级 执行更新
-			for (Layer *layer : m_LayerStack)
+			if (!m_Minsize)
 			{
-				layer->OnUpdate(timestep);
+				// 遍历各层级 执行更新
+				for (Layer* layer : m_LayerStack)
+				{
+					layer->OnUpdate(timestep);
+				}
 			}
 
 			// imgui 绘制
@@ -65,8 +68,7 @@ namespace Lambix
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(LB_BIND_EVENT_FN(Application::OnWindowClose));
-
-		// LB_CORE_TRACE("{0}", e);
+		dispatcher.Dispatch<WindowResizeEvent>(LB_BIND_EVENT_FN(Application::OnWindowResize));
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
 		{
@@ -92,5 +94,16 @@ namespace Lambix
 	{
 		m_Running = false;
 		return true;
+	}
+	bool Application::OnWindowResize(WindowResizeEvent& e)
+	{
+		if (e.GetWidth() == 0 || e.GetHeight() == 0)
+		{
+			m_Minsize = true;
+			return false;
+		}
+		m_Minsize = false;
+		RenderCommand::SetViewport(0, 0, e.GetWidth(), e.GetHeight());
+		return false;
 	}
 }
