@@ -1,9 +1,9 @@
 #pragma once 
 
-#include "Core/Timestep.h"
-#include "Renderer/OrthoCamera.h"
-#include "Events/MouseEvent.h"
-#include "Events/ApplicationEvent.h"
+#include "Lambix/Core/Timestep.h"
+#include "OrthoCamera.h"
+#include "Lambix/Events/MouseEvent.h"
+#include "Lambix/Events/ApplicationEvent.h"
 
 namespace Lambix
 {

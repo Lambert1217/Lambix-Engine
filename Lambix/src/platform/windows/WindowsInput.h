@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lambix/Input.h"
+#include "Lambix/Core/Input.h"
 
 namespace Lambix
 {

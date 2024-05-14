@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lambix/Layer.h"
+#include "Lambix/Core/Layer.h"
 
 #include "Lambix/Events/ApplicationEvent.h"
 #include "Lambix/Events/KeyEvent.h"

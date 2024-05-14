@@ -2,7 +2,7 @@
 
 #include <string>
 #include <unordered_map>
-#include "Lambix/Core.h"
+#include "Lambix/Core/Core.h"
 
 namespace Lambix
 {

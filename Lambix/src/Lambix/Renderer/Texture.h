@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lambix/Core.h"
+#include "Lambix/Core/Core.h"
 #include "string"
 
 namespace Lambix

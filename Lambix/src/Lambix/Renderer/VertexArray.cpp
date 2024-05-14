@@ -1,6 +1,6 @@
 #include "VertexArray.h"
 #include "Renderer.h"
-#include "Lambix/Log.h"
+#include "Lambix/Core/Log.h"
 
 #include "platform/OpenGL/OpenGLVertexArray.h"
 

@@ -1,6 +1,6 @@
 #include "OpenGLTexture.h"
-#include "Lambix/Core.h"
-#include "Lambix/Log.h"
+#include "Lambix/Core/Core.h"
+#include "Lambix/Core/Log.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"

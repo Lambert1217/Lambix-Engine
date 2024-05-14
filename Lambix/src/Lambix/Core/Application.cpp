@@ -3,7 +3,7 @@
 #include "Application.h"
 #include "Log.h"
 #include "Input.h"
-#include "Lambix/Core/Timestep.h"
+#include "Timestep.h"
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -12,7 +12,7 @@
 
 namespace Lambix
 {
-	Application *Application::m_Instance = nullptr;
+	Application* Application::m_Instance = nullptr;
 
 	Application::Application()
 	{
@@ -31,8 +31,7 @@ namespace Lambix
 	}
 
 	Application::~Application()
-	{
-	}
+	{}
 
 	void Application::Run()
 	{
@@ -53,7 +52,7 @@ namespace Lambix
 
 			// imgui 绘制
 			m_ImGuiLayer->Begin();
-			for (Layer *layer : m_LayerStack)
+			for (Layer* layer : m_LayerStack)
 			{
 				layer->OnImGuiRender();
 			}
@@ -64,7 +63,7 @@ namespace Lambix
 		}
 	}
 
-	void Application::OnEvent(Event &e)
+	void Application::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(LB_BIND_EVENT_FN(Application::OnWindowClose));
@@ -78,19 +77,19 @@ namespace Lambix
 		}
 	}
 
-	void Application::PushLayer(Layer *layer)
+	void Application::PushLayer(Layer* layer)
 	{
 		m_LayerStack.PushLayer(layer);
 		layer->OnAttach();
 	}
 
-	void Application::PushOverlay(Layer *overlay)
+	void Application::PushOverlay(Layer* overlay)
 	{
 		m_LayerStack.PushOverlay(overlay);
 		overlay->OnAttach();
 	}
 
-	bool Application::OnWindowClose(WindowCloseEvent &e)
+	bool Application::OnWindowClose(WindowCloseEvent& e)
 	{
 		m_Running = false;
 		return true;

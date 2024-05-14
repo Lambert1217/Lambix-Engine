@@ -1,6 +1,6 @@
 #include "Texture.h"
 #include "Renderer.h"
-#include "Lambix/Log.h"
+#include "Lambix/Core/Log.h"
 
 #include "platform/OpenGL/OpenGLTexture.h"
 

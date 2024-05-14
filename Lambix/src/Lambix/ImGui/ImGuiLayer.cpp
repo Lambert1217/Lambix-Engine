@@ -1,7 +1,7 @@
 #include "lbpch.h"
 #include "ImGuiLayer.h"
 
-#include "Lambix/Application.h"
+#include "Lambix/Core/Application.h"
 
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"

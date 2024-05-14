@@ -1,7 +1,7 @@
 #include "OrthoCameraController.h"
-#include "Input.h"
-#include "KeyCodes.h"
-#include "Core.h"
+#include "Lambix/Core/Input.h"
+#include "Lambix/Core/KeyCodes.h"
+#include "Lambix/Core/Core.h"
 
 namespace Lambix
 {

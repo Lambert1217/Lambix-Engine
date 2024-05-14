@@ -2,7 +2,7 @@
 
 #include "glad/glad.h"
 
-#include "Lambix/Log.h"
+#include "Lambix/Core/Log.h"
 
 namespace Lambix
 {
