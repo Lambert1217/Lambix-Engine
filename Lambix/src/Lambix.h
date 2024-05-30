@@ -29,6 +29,6 @@
 
 //---Enter Point---------------------------
 
-#include "Lambix/Core/EntryPoint.h"
+//#include "Lambix/Core/EntryPoint.h"
 
 //-----------------------------------------
