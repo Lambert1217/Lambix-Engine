@@ -16,7 +16,5 @@ public:
 private:
     Lambix::OrthoCameraController m_OrthoCameraController;
 
-    Lambix::Ref<Lambix::VertexArray> m_VertexArray;
-    Lambix::Ref<Lambix::ShaderLibrary> m_ShaderLibrary;
     glm::vec4 m_Color = { 1.0f, 0.78f, 0.81f, 1.0f };
 };

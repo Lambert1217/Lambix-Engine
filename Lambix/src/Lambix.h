@@ -20,6 +20,7 @@
 //---Renderer-----------------------------
 
 #include "Lambix/Renderer/Renderer.h"
+#include "Lambix/Renderer/Renderer2D.h"
 #include "Lambix/Renderer/RenderCommand.h"
 
 #include "Lambix/Renderer/Buffer.h"

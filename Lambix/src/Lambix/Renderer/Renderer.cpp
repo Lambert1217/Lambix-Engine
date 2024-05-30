@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "Renderer2D.h"
 
 #include "platform/OpenGL/OpenGLShader.h"
 
@@ -9,6 +10,7 @@ namespace Lambix
     void Renderer::Init()
     {
         RenderCommand::Init();
+        Renderer2D::Init();
     }
 
     void Renderer::BeginScene(OrthoCamera& camera)
