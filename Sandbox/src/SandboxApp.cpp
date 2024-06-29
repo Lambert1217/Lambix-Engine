@@ -5,9 +5,10 @@
 class Sandbox : public Lambix::Application
 {
 public:
-	Sandbox()
+	Sandbox(const Lambix::WindowProps& props = Lambix::WindowProps())
+		: Lambix::Application(props)
 	{
-		PushLayer(new Sandbox2D());
+		PushLayer(new Sandbox2D(props.Width, props.Height));
 	}
 	~Sandbox()
 	{}
@@ -15,5 +16,5 @@ public:
 
 Lambix::Application* Lambix::CreateApplication()
 {
-	return new Sandbox();
+	return new Sandbox({ "Lambix", 1920, 1080 });
 }

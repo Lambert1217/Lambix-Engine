@@ -4,7 +4,7 @@
 class Sandbox2D : public Lambix::Layer
 {
 public:
-    Sandbox2D();
+    Sandbox2D(uint32_t width, uint32_t height);
     ~Sandbox2D() = default;
 
     virtual void OnAttach() override;

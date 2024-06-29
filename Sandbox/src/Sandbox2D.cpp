@@ -4,8 +4,8 @@
 
 #define PROFILE_SCOPE(name) Lambix::Timer timer##__LINE__(name, [&](ProfileResult result) { m_ProfileResults.push_back(result); })
 
-Sandbox2D::Sandbox2D()
-    : Lambix::Layer("Sandbox2D"), m_OrthoCameraController(1280.0f / 720.0f, true)
+Sandbox2D::Sandbox2D(uint32_t width, uint32_t height)
+    : Lambix::Layer("Sandbox2D"), m_OrthoCameraController((float)width / (float)height)
 {}
 
 void Sandbox2D::OnAttach()
@@ -34,9 +34,9 @@ void Sandbox2D::OnUpdate(Lambix::Timestep ts)
     {
         PROFILE_SCOPE("Renderer draw");
         Lambix::Renderer2D::BeginScene(m_OrthoCameraController.GetCamera());
-        Lambix::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.6f, 0.4f }, glm::radians(-45.0f), m_Color);
-        Lambix::Renderer2D::DrawQuad({ 0.5f, 0.2f }, { 0.3f, 0.4f }, glm::radians(45.0f), m_Color);
-        Lambix::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 1.28f * 1.4, 0.72f * 1.4 }, glm::radians(0.0f), m_BackgroundTexture);
+        Lambix::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.7f, 0.7f }, glm::radians(0.0f), m_Color);
+        Lambix::Renderer2D::DrawQuad({ 0.5f, 0.2f }, { 0.4f, 0.4f }, glm::radians(45.0f), m_Color);
+        Lambix::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 1920.0f / 1080.0f, 1.0f }, glm::radians(0.0f), m_BackgroundTexture);
         Lambix::Renderer2D::EndScene();
     }
 }

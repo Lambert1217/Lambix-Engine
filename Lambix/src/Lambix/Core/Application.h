@@ -15,7 +15,7 @@ namespace Lambix
     class Application
     {
     public:
-        Application();
+        Application(const WindowProps& props);
         virtual ~Application();
 
         void Run(); // 运行 程序循环
