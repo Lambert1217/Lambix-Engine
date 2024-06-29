@@ -34,9 +34,9 @@ void Sandbox2D::OnUpdate(Lambix::Timestep ts)
     {
         PROFILE_SCOPE("Renderer draw");
         Lambix::Renderer2D::BeginScene(m_OrthoCameraController.GetCamera());
-        Lambix::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.6f, 0.4f }, m_Color);
-        Lambix::Renderer2D::DrawQuad({ 0.5f, 0.2f }, { 0.3f, 0.4f }, m_Color);
-        Lambix::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 1.28f * 1.4, 0.72f * 1.4 }, m_BackgroundTexture);
+        Lambix::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.6f, 0.4f }, glm::radians(-45.0f), m_Color);
+        Lambix::Renderer2D::DrawQuad({ 0.5f, 0.2f }, { 0.3f, 0.4f }, glm::radians(45.0f), m_Color);
+        Lambix::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 1.28f * 1.4, 0.72f * 1.4 }, glm::radians(0.0f), m_BackgroundTexture);
         Lambix::Renderer2D::EndScene();
     }
 }
@@ -48,6 +48,7 @@ void Sandbox2D::OnImGuiRender()
     ImGui::End();
 
     ImGui::Begin("ProfileResults");
+    ImGui::SetWindowFontScale(1.3f);
     for (auto& result : m_ProfileResults)
     {
         ImGui::Text("%s: %.3fms", result.Name, result.Time);

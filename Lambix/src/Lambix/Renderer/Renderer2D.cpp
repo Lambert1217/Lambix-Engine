@@ -66,17 +66,18 @@ namespace Lambix
     void Renderer2D::EndScene()
     {}
 
-    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color)
     {
-        DrawQuad({ position.x, position.y, 0.0f }, size, color);
+        DrawQuad({ position.x, position.y, 0.0f }, size, rotation, color);
     }
 
-    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color)
     {
         s_Data->Texture2DShader->Bind();
         s_Data->Texture2DShader->SetFloat4("u_Color", color);
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position);
+        transform *= glm::rotate(glm::mat4(1.0f), rotation, { 0.0f,0.0f,1.0f });
         transform *= glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
         s_Data->Texture2DShader->SetMat4("aTransform", transform);
 
@@ -86,17 +87,19 @@ namespace Lambix
         RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
     }
 
-    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture>& texture)
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<Texture>& texture, float tilingFactor, const glm::vec4& tintColor)
     {
-        DrawQuad({ position.x, position.y, 0.0f }, size, texture);
+        DrawQuad({ position.x, position.y, 0.0f }, size, rotation, texture, tilingFactor, tintColor);
     }
 
-    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture>& texture)
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<Texture>& texture, float tilingFactor, const glm::vec4& tintColor)
     {
         s_Data->Texture2DShader->Bind();
-        s_Data->Texture2DShader->SetFloat4("u_Color", glm::vec4(1.0f));
+        s_Data->Texture2DShader->SetFloat4("u_Color", tintColor);
+        s_Data->Texture2DShader->SetFloat("u_tilingFactor", tilingFactor);
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position);
+        transform *= glm::rotate(glm::mat4(1.0f), rotation, { 0.0f,0.0f,1.0f });
         transform *= glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
         s_Data->Texture2DShader->SetMat4("aTransform", transform);
 
