@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Lambix/Core.h"
+#include "Core.h"
 #include "Lambix/Events/Event.h"
 
-#include "Lambix/Core/Timestep.h"
+#include "Timestep.h"
 
 namespace Lambix
 {
@@ -11,16 +11,16 @@ namespace Lambix
 	class Layer
 	{
 	public:
-		Layer(const std::string &name = "Layer");
+		Layer(const std::string& name = "Layer");
 		virtual ~Layer();
 
 		virtual void OnAttach() {}			  // 图层附加
 		virtual void OnDetach() {}			  // 图层分离
 		virtual void OnUpdate(Timestep ts) {}			  // 图层更新
 		virtual void OnImGuiRender() {}		  // 在 ImGui 渲染时调用
-		virtual void OnEvent(Event &event) {} // 事件回调
+		virtual void OnEvent(Event& event) {} // 事件回调
 
-		inline const std::string &GetName() const { return m_DebugName; }
+		inline const std::string& GetName() const { return m_DebugName; }
 
 	protected:
 		std::string m_DebugName;

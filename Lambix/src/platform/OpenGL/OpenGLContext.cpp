@@ -1,6 +1,6 @@
 #include "lbpch.h"
 #include "OpenGLContext.h"
-#include "Lambix/Log.h"
+#include "Lambix/Core/Log.h"
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"

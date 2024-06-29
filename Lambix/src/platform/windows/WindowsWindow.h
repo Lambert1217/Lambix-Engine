@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lambix/Window.h"
+#include "Lambix/Core/Window.h"
 
 #include <GLFW/glfw3.h>
 

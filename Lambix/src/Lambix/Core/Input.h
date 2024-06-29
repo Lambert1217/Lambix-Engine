@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lambix/Core.h"
+#include "Lambix/Core/Core.h"
 
 /*
  *  实现 Input polling
@@ -25,7 +25,7 @@ namespace Lambix
 		virtual float GetMouseYImpl() = 0;
 
 	private:
-		static Input *s_Instance;
+		static Input* s_Instance;
 	};
 
 }

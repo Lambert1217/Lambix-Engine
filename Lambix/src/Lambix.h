@@ -2,22 +2,25 @@
 
 // 提供给使用 Lambix 的应用
 
-#include "Lambix/Application.h"
+#include "Lambix/Core/Application.h"
 
-#include "Lambix/Log.h"
+#include "Lambix/Core/Log.h"
 
-#include "Lambix/Layer.h"
+#include "Lambix/Core/Layer.h"
 #include "Lambix/ImGui/ImGuiLayer.h"
 
-#include "Lambix/Input.h"
-#include "Lambix/KeyCodes.h"
-#include "Lambix/MouseButtonCodes.h"
+#include "Lambix/Core/Input.h"
+#include "Lambix/Core/KeyCodes.h"
+#include "Lambix/Core/MouseButtonCodes.h"
 
 #include "Lambix/Core/Timestep.h"
+
+#include "Lambix/Renderer/OrthoCameraController.h"
 
 //---Renderer-----------------------------
 
 #include "Lambix/Renderer/Renderer.h"
+#include "Lambix/Renderer/Renderer2D.h"
 #include "Lambix/Renderer/RenderCommand.h"
 
 #include "Lambix/Renderer/Buffer.h"
@@ -25,10 +28,12 @@
 #include "Lambix/Renderer/Texture.h"
 #include "Lambix/Renderer/VertexArray.h"
 
-#include "Lambix/Renderer/OrthoCamera.h"
+//---Debug---------------------------------
+
+#include "Lambix/Debug/Timer.h"
 
 //---Enter Point---------------------------
 
-#include "Lambix/EntryPoint.h"
+//#include "Lambix/Core/EntryPoint.h"
 
 //-----------------------------------------

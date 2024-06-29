@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lambix/Layer.h"
+#include "Lambix/Core/Layer.h"
 
 #include "Lambix/Events/ApplicationEvent.h"
 #include "Lambix/Events/KeyEvent.h"
@@ -17,13 +17,9 @@ namespace Lambix
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
-		virtual void OnImGuiRender() override;
 
 		void Begin();
 		void End();
-
-	private:
-		float m_Time{0};
 	};
 
 }

@@ -2,7 +2,7 @@
 #include "WindowsInput.h"
 
 #include "GLFW/glfw3.h"
-#include "Lambix/Application.h"
+#include "Lambix/Core/Application.h"
 
 namespace Lambix {
 

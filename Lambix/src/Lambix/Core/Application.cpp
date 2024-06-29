@@ -3,7 +3,7 @@
 #include "Application.h"
 #include "Log.h"
 #include "Input.h"
-#include "Lambix/Core/Timestep.h"
+#include "Timestep.h"
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -12,7 +12,7 @@
 
 namespace Lambix
 {
-	Application *Application::m_Instance = nullptr;
+	Application* Application::m_Instance = nullptr;
 
 	Application::Application()
 	{
@@ -31,8 +31,7 @@ namespace Lambix
 	}
 
 	Application::~Application()
-	{
-	}
+	{}
 
 	void Application::Run()
 	{
@@ -42,15 +41,18 @@ namespace Lambix
 			Timestep timestep = CurrentTime - LastFrameTime;
 			LastFrameTime = CurrentTime;
 
-			// 遍历各层级 执行更新
-			for (Layer *layer : m_LayerStack)
+			if (!m_Minsize)
 			{
-				layer->OnUpdate(timestep);
+				// 遍历各层级 执行更新
+				for (Layer* layer : m_LayerStack)
+				{
+					layer->OnUpdate(timestep);
+				}
 			}
 
 			// imgui 绘制
 			m_ImGuiLayer->Begin();
-			for (Layer *layer : m_LayerStack)
+			for (Layer* layer : m_LayerStack)
 			{
 				layer->OnImGuiRender();
 			}
@@ -61,12 +63,11 @@ namespace Lambix
 		}
 	}
 
-	void Application::OnEvent(Event &e)
+	void Application::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(LB_BIND_EVENT_FN(Application::OnWindowClose));
-
-		// LB_CORE_TRACE("{0}", e);
+		dispatcher.Dispatch<WindowResizeEvent>(LB_BIND_EVENT_FN(Application::OnWindowResize));
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
 		{
@@ -76,21 +77,32 @@ namespace Lambix
 		}
 	}
 
-	void Application::PushLayer(Layer *layer)
+	void Application::PushLayer(Layer* layer)
 	{
 		m_LayerStack.PushLayer(layer);
 		layer->OnAttach();
 	}
 
-	void Application::PushOverlay(Layer *overlay)
+	void Application::PushOverlay(Layer* overlay)
 	{
 		m_LayerStack.PushOverlay(overlay);
 		overlay->OnAttach();
 	}
 
-	bool Application::OnWindowClose(WindowCloseEvent &e)
+	bool Application::OnWindowClose(WindowCloseEvent& e)
 	{
 		m_Running = false;
 		return true;
+	}
+	bool Application::OnWindowResize(WindowResizeEvent& e)
+	{
+		if (e.GetWidth() == 0 || e.GetHeight() == 0)
+		{
+			m_Minsize = true;
+			return false;
+		}
+		m_Minsize = false;
+		RenderCommand::SetViewport(0, 0, e.GetWidth(), e.GetHeight());
+		return false;
 	}
 }

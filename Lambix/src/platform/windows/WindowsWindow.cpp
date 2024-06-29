@@ -1,6 +1,6 @@
 #include "lbpch.h"
 #include "WindowsWindow.h"
-#include <Lambix/Log.h>
+#include <Lambix/Core/Log.h>
 #include "Lambix/Events/ApplicationEvent.h"
 #include "Lambix/Events/KeyEvent.h"
 #include "Lambix/Events/MouseEvent.h"
