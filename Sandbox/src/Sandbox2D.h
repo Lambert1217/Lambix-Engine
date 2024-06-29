@@ -18,4 +18,11 @@ private:
 
     glm::vec4 m_Color = { 1.0f, 0.78f, 0.81f, 1.0f };
     Lambix::Ref<Lambix::Texture2D> m_BackgroundTexture;
+
+    struct ProfileResult
+    {
+        const char* Name;
+        float Time;
+    };
+    std::vector<ProfileResult> m_ProfileResults;
 };

@@ -93,12 +93,4 @@ namespace Lambix
 			glfwMakeContextCurrent(backup_current_context);				  // 将原来的 OpenGL 上下文恢复为当前上下文
 		}
 	}
-
-	// 在 ImGui 渲染时调用
-	void ImGuiLayer::OnImGuiRender()
-	{
-		//static bool show = true;	  // 静态变量，控制演示窗口的显示
-		//ImGui::ShowDemoWindow(&show); // 显示 ImGui 演示窗口
-	}
-
 }

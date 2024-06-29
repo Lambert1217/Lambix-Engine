@@ -28,6 +28,10 @@
 #include "Lambix/Renderer/Texture.h"
 #include "Lambix/Renderer/VertexArray.h"
 
+//---Debug---------------------------------
+
+#include "Lambix/Debug/Timer.h"
+
 //---Enter Point---------------------------
 
 //#include "Lambix/Core/EntryPoint.h"
