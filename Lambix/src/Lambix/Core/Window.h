@@ -15,7 +15,7 @@ namespace Lambix
 		unsigned int Height;
 
 		WindowProps(const std::string &title = "Lambix Engine",
-					unsigned int width = 1280, unsigned int height = 720)
+			unsigned int width = 1280 * 1.5, unsigned int height = 720 * 1.5)
 			: Title(title), Width(width), Height(height)
 		{
 		}
